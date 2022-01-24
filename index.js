@@ -4,6 +4,9 @@ let app = express();
 let pieRepo = require('./repos/pierepo');
 let errorHelper = require('./helpers/errorHelpers');
 
+const winston = require('winston');
+const { transports } = require('winston');
+
 // Use the Express Router object
 let router = express.Router();
 
@@ -19,6 +22,11 @@ router.get('/', function (req, res, next) {
             "message": "All pies retrieved.",
             "data": data
         });
+    logger.info({
+        "status": 200,
+        "statusText": "OK",
+        "message": "All pies retrieved"
+    });
     }, function(err) {
         next(err);
     });
@@ -173,6 +181,18 @@ app.use(errorHelper.clientErrorHandler);
 
 // Configure catch-all exception middleware last
 app.use(errorHelper.errorHandler);
+
+// Configure logger
+const logConfiguration = {
+    'transports': [
+        new winston.transports.File({
+            filename: 'logs/example.log'
+        })
+    ]
+};
+
+// Create the logger
+const logger = winston.createLogger(logConfiguration);
 
 // Create server to listen on port 5000
 var server = app.listen(5000, function () {
