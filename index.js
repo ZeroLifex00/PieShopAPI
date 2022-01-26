@@ -4,6 +4,22 @@ let app = express();
 let pieRepo = require('./repos/pierepo');
 let errorHelper = require('./helpers/errorHelpers');
 
+const winston = require('winston')
+const ecsFormat = require('@elastic/ecs-winston-format')
+
+const logger = winston.createLogger({
+    level: 'debug',
+    format: ecsFormat({ convertReqRes: true }),
+    transports: [
+        //new winston.transports.Console(),
+        new winston.transports.File({
+            //path to log file
+            filename: 'logs/log.json',
+            level: 'debug'
+        })
+    ]
+})
+
 // Use the Express Router object
 let router = express.Router();
 
@@ -19,6 +35,7 @@ router.get('/', function (req, res, next) {
             "message": "All pies retrieved.",
             "data": data
         });
+        logger.info('handled request', { req, res })
     }, function(err) {
         next(err);
     });
@@ -38,6 +55,7 @@ router.get('/search', function (req, res, next) {
             "message": "All pies retrieved.",
             "data": data
         });
+        logger.info('handled request', { req, res })
     }, function (err) {
         next(err);
     });
@@ -53,6 +71,7 @@ router.get('/:id', function (req, res, next) {
                 "message": "Single pie retrieved.",
                 "data": data
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -64,6 +83,7 @@ router.get('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     }, function(err) {
         next(err);
@@ -79,6 +99,7 @@ router.post('/', function (req, res, next) {
             "messages": "New Pie Added.",
             "data": data
         });
+        logger.info('handled request', { req, res })
     }, function(err) {
         next(err);
     });
@@ -97,6 +118,7 @@ router.put('/:id', function (req, res, next) {
                     "data": data
                 });
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -108,6 +130,7 @@ router.put('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     }, function(err) {
         next(err);
@@ -127,6 +150,7 @@ router.delete('/:id', function (req, res, next) {
                     "data": "Pie '" + req.params.id + "' deleted."
                 });
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -138,6 +162,7 @@ router.delete('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     });
 })
@@ -155,6 +180,7 @@ router.patch('/:id', function (req, res, next) {
                     "data": data
                 });
             });
+            logger.info('handled request', { req, res })
         }
     })
 })
@@ -175,6 +201,6 @@ app.use(errorHelper.clientErrorHandler);
 app.use(errorHelper.errorHandler);
 
 // Create server to listen on port 5000
-var server = app.listen(5000, function () {
-    console.log('Node server is running on http://localhost:5000..');
+var server = app.listen(5001, function () {
+    console.log('Node server is running on http://localhost:5001..');
 });
