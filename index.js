@@ -55,6 +55,7 @@ router.get('/search', function (req, res, next) {
             "message": "All pies retrieved.",
             "data": data
         });
+        logger.info('handled request', { req, res })
     }, function (err) {
         next(err);
     });
@@ -70,6 +71,7 @@ router.get('/:id', function (req, res, next) {
                 "message": "Single pie retrieved.",
                 "data": data
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -81,6 +83,7 @@ router.get('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     }, function(err) {
         next(err);
@@ -96,6 +99,7 @@ router.post('/', function (req, res, next) {
             "messages": "New Pie Added.",
             "data": data
         });
+        logger.info('handled request', { req, res })
     }, function(err) {
         next(err);
     });
@@ -114,6 +118,7 @@ router.put('/:id', function (req, res, next) {
                     "data": data
                 });
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -125,6 +130,7 @@ router.put('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     }, function(err) {
         next(err);
@@ -144,6 +150,7 @@ router.delete('/:id', function (req, res, next) {
                     "data": "Pie '" + req.params.id + "' deleted."
                 });
             });
+            logger.info('handled request', { req, res })
         }
         else {
             res.status(404).json({
@@ -155,6 +162,7 @@ router.delete('/:id', function (req, res, next) {
                     "message": "The pie '" + req.params.id + "' could not be found."
                 }
             });
+            logger.error('error occured', { req, res })
         }
     });
 })
@@ -172,6 +180,7 @@ router.patch('/:id', function (req, res, next) {
                     "data": data
                 });
             });
+            logger.info('handled request', { req, res })
         }
     })
 })
